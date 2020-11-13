@@ -15,7 +15,7 @@ import java.util.concurrent.TimeUnit
 
 
 class Urbit(val code: String, val url: String) {
-    val client = OkHttpClient.Builder().readTimeout(30, TimeUnit.SECONDS).build()
+    val client = OkHttpClient.Builder().readTimeout(0, TimeUnit.SECONDS).build()
     val sseclient = EventSources.createFactory(client)
     var cookie: String? = null
     val uid: Long = Calendar.getInstance().timeInMillis
