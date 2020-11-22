@@ -33,7 +33,9 @@ fun main() {
 
 ## To do
 * improve documentation
-* write methods for scry, spider
-* handle timeouts better
+* write methods for scry, spider | DONE
+* handle timeouts better | DONE
 * abstract away message boilerplate, let all actions call sendmessage()
 * restructure code into Kotlin Multiplatform
+* write graph-store interface
+* write other urbit apps interfaces
