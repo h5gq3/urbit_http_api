@@ -1,11 +1,8 @@
 package urbit.http.api
 
-import okhttp3.FormBody
+import okhttp3.*
 import okhttp3.MediaType.Companion.toMediaType
-import okhttp3.OkHttpClient
-import okhttp3.Request
 import okhttp3.RequestBody.Companion.toRequestBody
-import okhttp3.Response
 import okhttp3.sse.EventSource
 import okhttp3.sse.EventSourceListener
 import okhttp3.sse.EventSources
@@ -46,7 +43,7 @@ class Urbit(val code: String, val url: String) {
 
     fun poke(ship: String, app: String, mark: String, j: String) {
         val putBody = """[{"id":${getEventId()},"action":"poke","ship":"$ship","app":"$app","mark":"$mark","json":"$j"}]"""
-        var request = Request.Builder()
+        val request = Request.Builder()
             .url(channelUrl)
             .header("Cookie", cookie!!)
             .put(putBody.toRequestBody("application/json".toMediaType()))
@@ -59,7 +56,7 @@ class Urbit(val code: String, val url: String) {
 
     fun subscribe(ship: String, app: String, path: String) {
         val putBody = """[{"id":${getEventId()},"action":"subscribe","ship":"$ship","app":"$app","path":"$path"}]"""
-        var request = Request.Builder()
+        val request = Request.Builder()
             .url(channelUrl)
             .header("Cookie", cookie!!)
             .put(putBody.toRequestBody("application/json".toMediaType()))
@@ -72,7 +69,7 @@ class Urbit(val code: String, val url: String) {
 
     fun unsubscribe(subscription: Int) {
         val putBody = """[{"id":${getEventId()},"action":"unsubscribe","subscription":$subscription}]"""
-        var request = Request.Builder()
+        val request = Request.Builder()
             .url(channelUrl)
             .header("Cookie", cookie!!)
             .put(putBody.toRequestBody("application/json".toMediaType()))
@@ -86,7 +83,7 @@ class Urbit(val code: String, val url: String) {
 
     fun delete() {
         val putBody = """[{"id":${getEventId()},"action":"delete"}]"""
-        var request = Request.Builder()
+        val request = Request.Builder()
             .url(channelUrl)
             .header("Cookie", cookie!!)
             .put(putBody.toRequestBody("application/json".toMediaType()))
@@ -111,6 +108,38 @@ class Urbit(val code: String, val url: String) {
             if (!response.isSuccessful) throw IOException("Unexpected code $response")
         }
         println("ack sent")
+    }
+
+    fun scry(app: String, path: String, mark: String) {
+        val request = Request.Builder()
+                .url("$url/~/scry/$app$path.$mark")
+                .header("Cookie", cookie!!)
+                .build()
+        client.newCall(request).execute().use { response ->
+            if (!response.isSuccessful) throw IOException("Unexpected code $response")
+            println(response.body!!.string())
+        }
+    }
+
+    fun spider(inputMark: String, outputMark: String, threadName: String, j: String) {
+        // TODO: test if works
+        val request = Request.Builder()
+                .url("$url/spider/$inputMark/$threadName/$outputMark.json")
+                .header("Cookie", cookie!!)
+                .post(j.toRequestBody("application/json".toMediaType()))
+                .build()
+        client.newCall(request).enqueue(object : Callback {
+            override fun onFailure(call: Call, e: IOException) {
+                e.printStackTrace()
+            }
+
+            override fun onResponse(call: Call, response: Response) {
+                response.use {
+                    if (!response.isSuccessful) throw IOException("Unexpected code $response")
+                    println(response.body!!.string())
+                }
+            }
+        })
     }
 
     fun sseInit(): EventSource {
