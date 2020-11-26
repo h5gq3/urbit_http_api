@@ -12,6 +12,7 @@ import java.util.concurrent.TimeUnit
 
 
 class Urbit(val code: String, val url: String) {
+    var ship: String? = null
     val client = OkHttpClient.Builder().readTimeout(0, TimeUnit.SECONDS).build()
     val sseclient = EventSources.createFactory(client)
     var cookie: String? = null
@@ -34,6 +35,8 @@ class Urbit(val code: String, val url: String) {
             .build()
         client.newCall(request).execute().use { response ->
             if (!response.isSuccessful) throw IOException("Unexpected code $response")
+            ship = response.header("set-cookie")
+            ship = ship?.split("-", "=")?.get(1)
 
             cookie = response.header("set-cookie")
             cookie = cookie?.split(";")?.get(0)
