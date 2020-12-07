@@ -1,5 +1,6 @@
 package urbit.http.api
 
+
 fun numToUd(num: Int): String {
     return num.toString()
             .map { it.toString() }
@@ -27,7 +28,75 @@ fun moduleToMark(mod: String): Any? {
     }
 }
 
-class GraphStore {
+class GraphStore(val instance: Urbit) {
+
+    fun createManagedGraph(name: String, title: String, description: String, group: String, mod: String) {
+        instance.createManagedGraph(name, title, description, group, mod)
+    }
+
+    fun createUnmanagedGraph(name: String, title: String, description: String, policy: String, mod: String) {
+        instance.createUnmanagedGraph(name, title, description, policy, mod)
+    }
+
+    fun joinGraph(ship: String, name: String) {
+        instance.joinGraph(ship, name)
+    }
+
+    fun deleteGraph(name: String) {
+        instance.deleteGraph(name)
+    }
+
+    fun leaveGraph(ship: String, name: String) {
+        instance.leaveGraph(ship, name)
+    }
+
+    fun groupifyGraph(ship: String, name: String, toPath: String) {
+        instance.groupifyGraph(ship, name, toPath)
+    }
+
+    fun addGraph(ship: String, name: String, graph: Any, mark: Any) {
+        instance.addGraph(ship, name, graph, mark)
+    }
+
+    fun addPost(ship: String, name: String, post: Post) {
+        instance.addPost(ship, name, post)
+    }
+
+    fun addNode(ship: String, name: String, node: Node) {
+        instance.addNode(ship, name, node)
+    }
+
+    fun addNodes(ship: String, name: String, nodes: String) {
+        instance.addNodes(ship, name, nodes)
+    }
+
+    fun removeNodes(ship: String, name: String, indices: List<String>) {
+        instance.removeNodes(ship, name, indices)
+    }
+
+    fun getKeys() {
+        instance.getKeys()
+    }
+
+    fun getTags() {
+        instance.getTags()
+    }
+
+    fun getTagQueries() {
+        instance.getTagQueries()
+    }
+
+    fun getGraph(ship: String, resource: String) {
+        instance.getGraph(ship, resource)
+    }
+
+    fun getGraphSubset(ship: String, resource: String, start: String, end: String) {
+        instance.getGraphSubset(ship, resource, start, end)
+    }
+
+    fun getNode(ship: String, resource: String, index: String) {
+        instance.getNode(ship, resource, index)
+    }
 
     fun Urbit.createManagedGraph(name: String, title: String, description: String, group: String, mod: String) {
         val associated = """{"group":"${resourceFromPath(group)}"}"""
@@ -43,6 +112,7 @@ class GraphStore {
         "mark": "${moduleToMark(mod)}"
       }""")
     }
+
 
     fun Urbit.createUnmanagedGraph(name: String, title: String, description: String, policy: String, mod: String) {
         val resource = makeResource(ship, name)
