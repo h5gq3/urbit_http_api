@@ -54,6 +54,10 @@ class GraphStore(val instance: Urbit) {
         instance.groupifyGraph(ship, name, toPath)
     }
 
+    fun eval(cord: String) {
+        instance.eval(cord)
+    }
+
     fun addGraph(ship: String, name: String, graph: Any, mark: Any) {
         instance.addGraph(ship, name, graph, mark)
     }
@@ -166,6 +170,11 @@ class GraphStore(val instance: Urbit) {
       }""")
     }
 
+    fun Urbit.eval(cord: String) {
+
+        spider("graph-view-action", "tang", "graph-eval", """{"eval": "$cord"}""")
+    }
+
     fun Urbit.addGraph(ship: String, name: String, graph: Any, mark: Any) {
         val resource = makeResource(ship, name)
 
@@ -173,7 +182,7 @@ class GraphStore(val instance: Urbit) {
       "add-graph": {
         "$resource",
         $graph,
-        $mark
+        "$mark"
       }""")
     }
 
