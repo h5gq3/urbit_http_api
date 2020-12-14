@@ -16,9 +16,10 @@ class Urbit(val code: String, val url: String) {
     val client = OkHttpClient.Builder().readTimeout(0, TimeUnit.SECONDS).build()
     val sseclient = EventSources.createFactory(client)
     var cookie: String? = null
-    val uid: Long = Calendar.getInstance().timeInMillis
+    var uid: Long? = null
     var lastEventId: Int = 0
     val channelUrl: String = "$url/~/channel/$uid"
+
 
     fun getEventId(): Int {
         lastEventId = lastEventId + 1
@@ -40,12 +41,14 @@ class Urbit(val code: String, val url: String) {
 
             cookie = response.header("set-cookie")
             cookie = cookie?.split(";")?.get(0)
+
+            uid = Calendar.getInstance().timeInMillis
         }
     }
 
 
     fun poke(ship: String, app: String, mark: String, j: String) {
-        val putBody = """[{"id":${getEventId()},"action":"poke","ship":"$ship","app":"$app","mark":"$mark","json":"$j"}]"""
+        val putBody = """[{"id":${getEventId()},"action":"poke","ship":"$ship","app":"$app","mark":"$mark","json":$j}]"""
         val request = Request.Builder()
             .url(channelUrl)
             .header("Cookie", cookie!!)
@@ -53,7 +56,6 @@ class Urbit(val code: String, val url: String) {
             .build()
         client.newCall(request).execute().use { response ->
             if (!response.isSuccessful) throw IOException("Unexpected code $response")
-
         }
     }
 
@@ -139,7 +141,6 @@ class Urbit(val code: String, val url: String) {
             override fun onResponse(call: Call, response: Response) {
                 response.use {
                     if (!response.isSuccessful) throw IOException("Unexpected code $response")
-                    println(response.body!!.string())
                 }
             }
         })
@@ -175,5 +176,7 @@ class Urbit(val code: String, val url: String) {
             println(data)
             println("event received")
         }
+
     }
+
 }
