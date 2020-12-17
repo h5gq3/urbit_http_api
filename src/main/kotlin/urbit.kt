@@ -127,7 +127,6 @@ class Urbit(val code: String, val url: String) {
     }
 
     fun spider(inputMark: String, outputMark: String, threadName: String, j: String) {
-        // TODO: test if works
         val request = Request.Builder()
                 .url("$url/spider/$inputMark/$threadName/$outputMark.json")
                 .header("Cookie", cookie!!)

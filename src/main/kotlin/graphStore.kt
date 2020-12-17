@@ -1,5 +1,7 @@
 package urbit.http.api
 
+import java.util.*
+
 
 fun numToUd(num: Int): String {
     return num.toString()
@@ -62,7 +64,7 @@ class GraphStore(val instance: Urbit) {
         instance.addGraph(ship, name, graph, mark)
     }
 
-    fun addPost(ship: String, name: String, post: Post) {
+    fun addPost(ship: String, name: String, post: String) {
         instance.addPost(ship, name, post)
     }
 
@@ -106,68 +108,38 @@ class GraphStore(val instance: Urbit) {
         val associated = """{"group":"${resourceFromPath(group)}"}"""
         val resource = makeResource(ship, name)
 
-        spider("graph-view-action", "json", "graph-create", """{
-      "create": {
-        "$resource",
-        "$title",
-        "$description",
-        "$associated",
-        "module": "$mod",
-        "mark": "${moduleToMark(mod)}"
-      }""")
+        spider("graph-view-action", "json", "graph-create", """{"create":{"resource":$resource,"title":"$title","description":"$description","associated":$associated,"module":"$mod","mark":"${moduleToMark(mod)}"}}""")
     }
 
 
     fun Urbit.createUnmanagedGraph(name: String, title: String, description: String, policy: String, mod: String) {
         val resource = makeResource(ship, name)
 
-        spider("graph-view-action", "json", "graph-create", """{
-      "create": {
-        "$resource",
-        "$title",
-        "$description",
-        "associated": "$policy",
-        "module": "$mod",
-        "mark": "${moduleToMark(mod)}"
-      }""")
+        spider("graph-view-action", "json", "graph-create", """{"create":{"resource":${makeResource(ship, name)},"title":"$title","description":"$description","mark":"${moduleToMark(mod)}","associated":{"policy":{"open":{"banRanks":[],"banned":[]}}},"module":"$mod"}}""")
     }
 
     fun Urbit.joinGraph(ship: String, name: String) {
         val resource = makeResource(ship, name)
 
-        spider("graph-view-action", "json", "graph-join", """{
-      "join": {
-        "$resource",
-        "$ship"
-      }""")
+        spider("graph-view-action", "json", "graph-join", """{"join":{"resource":$resource,"ship":"$ship"}}""")
     }
 
     fun Urbit.deleteGraph(name: String) {
         val resource = makeResource(ship, name)
 
-        spider("graph-view-action", "json", "graph-delete", """{
-      "delete": {
-        "$resource"
-      }""")
+        spider("graph-view-action", "json", "graph-delete", """{"delete":{"resource":$resource}}""")
     }
 
     fun Urbit.leaveGraph(ship: String, name: String) {
         val resource = makeResource(ship, name)
 
-        spider("graph-view-action", "json", "graph-leave", """{
-      "leave": {
-        "$resource"
-      }""")
+        spider("graph-view-action", "json", "graph-leave", """{"leave":{"resource":$resource}}""")
     }
 
     fun Urbit.groupifyGraph(ship: String, name: String, toPath: String) {
         val resource = makeResource(ship, name)
 
-        spider("graph-view-action", "json", "graph-groupify", """{
-      "groupify": {
-        "$resource",
-        "$toPath"
-      }""")
+        spider("graph-view-action", "json", "graph-groupify", """{"groupify":{"resource":$resource,"to":"$toPath"}}""")
     }
 
     fun Urbit.eval(cord: String) {
@@ -178,54 +150,33 @@ class GraphStore(val instance: Urbit) {
     fun Urbit.addGraph(ship: String, name: String, graph: Any, mark: Any) {
         val resource = makeResource(ship, name)
 
-        poke(ship, "graph-store", "graph-update", """{
-      "add-graph": {
-        "$resource",
-        $graph,
-        "$mark"
-      }""")
+        poke(ship.drop(1), "graph-store", "graph-update", """{"add-graph":{"resource":$resource,"graph":{$graph},"mark":"$mark"}}""")
     }
 
-    fun Urbit.addPost(ship: String, name: String, post: Post) {
+    fun Urbit.addPost(ship: String, name: String, post: String) {
         val resource = makeResource(ship, name)
-        val nodes = """{"${post.index}":{"$post","children":{"empty":"null"}}}"""
+        val nodes = """"/${Calendar.getInstance().timeInMillis}":{"post":{$post},"children":null}"""
 
-        poke(ship, "graph-push-hook", "graph-update", """{
-      "add-nodes": {
-        "$resource",
-        $nodes
-      }""")
+        poke(ship.drop(1), "graph-push-hook", "graph-update", """{"add-nodes":{"resource":$resource,"nodes":{$nodes}}}""")
     }
 
     fun Urbit.addNode(ship: String, name: String, node: Node) {
         val resource = makeResource(ship, name)
         val nodes = """{"${node.post.index}":"$node"}"""
 
-        poke(ship, "graph-push-hook", "graph-update", """{
-      "add-nodes": {
-        "$resource",
-        $nodes
-      }""")
+        poke(ship.drop(1), "graph-push-hook", "graph-update", """{"add-nodes":{"resource":$resource,"nodes":{$nodes}}}""")
     }
 
     fun Urbit.addNodes(ship: String, name: String, nodes: String) {
         val resource = makeResource(ship, name)
 
-        poke(ship, "graph-push-hook", "graph-update", """{
-      "add-nodes": {
-        "$resource",
-        $nodes
-      }""")
+        poke(ship.drop(1), "graph-push-hook", "graph-update", """{"add-nodes":{"resource":$resource,"nodes":{$nodes}}}""")
     }
 
     fun Urbit.removeNodes(ship: String, name: String, indices: List<String>) {
         val resource = makeResource(ship, name)
 
-        poke(ship, "graph-push-hook", "graph-update", """{
-      "remove-nodes": {
-        "$resource",
-        "$indices"
-      }""")
+        poke(ship, "graph-push-hook", "graph-update", """{"remove-nodes":{"resource":$resource,"indices":"$indices"}}""")
     }
 
     fun Urbit.getKeys() {
