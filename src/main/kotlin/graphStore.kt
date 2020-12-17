@@ -176,7 +176,7 @@ class GraphStore(val instance: Urbit) {
     fun Urbit.removeNodes(ship: String, name: String, indices: List<String>) {
         val resource = makeResource(ship, name)
 
-        poke(ship, "graph-push-hook", "graph-update", """{"remove-nodes":{"resource":$resource,"indices":"$indices"}}""")
+        poke(ship, "graph-push-hook", "graph-update", """{"remove-nodes":{"resource":$resource,"indices":$indices}}""")
     }
 
     fun Urbit.getKeys() {
