@@ -60,8 +60,8 @@ class GraphStore(val instance: Urbit) {
         instance.eval(cord)
     }
 
-    fun addGraph(ship: String, name: String, graph: Any, mark: Any) {
-        instance.addGraph(ship, name, graph, mark)
+    fun addGraph(ship: String, name: String, graph: Any, mark: Any, overwrite: Boolean) {
+        instance.addGraph(ship, name, graph, mark, overwrite)
     }
 
     fun addPost(ship: String, name: String, post: String) {
@@ -147,10 +147,10 @@ class GraphStore(val instance: Urbit) {
         spider("graph-view-action", "tang", "graph-eval", """{"eval": "$cord"}""")
     }
 
-    fun Urbit.addGraph(ship: String, name: String, graph: Any, mark: Any) {
+    fun Urbit.addGraph(ship: String, name: String, graph: Any, mark: Any, overwrite: Boolean) {
         val resource = makeResource(ship, name)
 
-        poke(ship.drop(1), "graph-store", "graph-update", """{"add-graph":{"resource":$resource,"graph":{$graph},"mark":"$mark"}}""")
+        poke(ship.drop(1), "graph-store", "graph-update", """{"add-graph":{"resource":$resource,"graph":{$graph},"mark":"$mark","overwrite":$overwrite}}""")
     }
 
     fun Urbit.addPost(ship: String, name: String, post: String) {
