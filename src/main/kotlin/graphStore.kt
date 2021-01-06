@@ -26,6 +26,7 @@ fun moduleToMark(mod: String): Any? {
     when (mod) {
         "link" -> return "graph-validator-link"
         "publish" -> return "graph-validator-publish"
+        "chat" -> return "graph-validator-chat"
         else -> return null
     }
 }
