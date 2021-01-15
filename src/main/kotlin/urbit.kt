@@ -112,7 +112,6 @@ class Urbit(val code: String, val url: String) {
         client.newCall(request).execute().use { response ->
             if (!response.isSuccessful) throw IOException("Unexpected code $response")
         }
-        println("ack sent")
     }
 
     fun scry(app: String, path: String, mark: String) {
@@ -156,24 +155,20 @@ class Urbit(val code: String, val url: String) {
 
     inner class Sselistener : EventSourceListener() {
         override fun onOpen(eventSource: EventSource, response: Response) {
-            println("sse connection opened")
         }
 
         override fun onFailure(eventSource: EventSource, t: Throwable?, response: Response?) {
-            println("something failed")
             t?.printStackTrace()
 
         }
 
         override fun onClosed(eventSource: EventSource) {
-            println("sse connection closed")
 
         }
 
         override fun onEvent(eventSource: EventSource, id: String?, type: String?, data: String) {
             ack(eventId = id!!)
             println(data)
-            println("event received")
         }
 
     }
