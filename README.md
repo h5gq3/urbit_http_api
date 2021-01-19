@@ -30,6 +30,7 @@ fun main() {
     zod.delete()
 }
 ```
+Look for more examples at test/urbitclient.kt
 
 ## To do
 * improve documentation
@@ -37,5 +38,5 @@ fun main() {
 * handle timeouts better | DONE
 * abstract away message boilerplate, let all actions call sendmessage()
 * restructure code into Kotlin Multiplatform
-* write graph-store interface
+* write graph-store interface | DONE
 * write other urbit apps interfaces
