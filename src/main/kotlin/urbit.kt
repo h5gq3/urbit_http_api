@@ -18,7 +18,7 @@ class Urbit(val code: String, val url: String) {
     var cookie: String? = null
     var uid: Long? = null
     var lastEventId: Int = 0
-    val channelUrl: String = "$url/~/channel/$uid"
+    var channelUrl: String = "$url/~/channel/$uid"
 
 
     fun getEventId(): Int {
@@ -43,6 +43,7 @@ class Urbit(val code: String, val url: String) {
             cookie = cookie?.split(";")?.get(0)
 
             uid = Calendar.getInstance().timeInMillis
+            channelUrl = "$url/~/channel/$uid"
         }
     }
 
@@ -114,14 +115,14 @@ class Urbit(val code: String, val url: String) {
         }
     }
 
-    fun scry(app: String, path: String, mark: String) {
+    fun scry(app: String, path: String, mark: String): String {
         val request = Request.Builder()
                 .url("$url/~/scry/$app$path.$mark")
                 .header("Cookie", cookie!!)
                 .build()
         client.newCall(request).execute().use { response ->
             if (!response.isSuccessful) throw IOException("Unexpected code $response")
-            println(response.body!!.string())
+            return response.body!!.string()
         }
     }
 
