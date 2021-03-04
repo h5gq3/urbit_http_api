@@ -2,6 +2,8 @@
 
 Urbit HTTP API library in Kotlin for connecting to an Urbit instance
 
+[![awesome urbit badge](https://img.shields.io/badge/~-awesome%20urbit-lightgrey)](https://github.com/urbit/awesome-urbit)
+
 ## Usage
 
 1. Copy `urbit.kt` in `/src/main/kotlin/urbit.kt` to your Kotlin project
